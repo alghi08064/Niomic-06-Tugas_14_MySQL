@@ -1,0 +1,47 @@
+MariaDB [belajar]> CREATE TABLE nilai_mahasiswa (
+    -> nim CHAR(8) PRIMARY KEY,
+    -> nama VARCHAR(50),
+    -> semester_1 DECIMAL(4,2),
+    -> semester_2 DECIMAL(4,2),
+    -> semester_3 DECIMAL(4,2) );
+Query OK, 0 rows affected (0.023 sec)
+
+MariaDB [belajar]> CREATE TABLE ipk_mahasiswa (
+    -> nama_dan_nim varchar(50),
+    -> nilai_ipk decimal(4,2));
+Query OK, 0 rows affected (0.041 sec)
+
+MariaDB [belajar]> delimiter //
+MariaDB [belajar]> create trigger insert_ipk
+    -> before insert on nilai_mahasiswa
+    -> for each row
+    -> insert into ipk_mahasiswa values
+    -> (upper(concat(NEW.nama,' (', NEW.nim, ')')), round((NEW.semester_1+NEW.semester_2+NEW.semester_3)/3,2));
+    -> end//
+Query OK, 0 rows affected (0.020 sec)
+
+MariaDB [belajar]> delimiter ;
+MariaDB [belajar]> INSERT INTO nilai_mahasiswa VALUES ('17090113', 'Riana Putria', 3.12, 2.98, 3.45);
+Query OK, 1 row affected (0.010 sec)
+
+MariaDB [belajar]>
+MariaDB [belajar]> INSERT INTO nilai_mahasiswa VALUES ('17140143', 'Rudi Permana', 2.56, 3.14, 3.22);
+Query OK, 1 row affected (0.011 sec)
+
+MariaDB [belajar]> select * from nilai_mahasiswa;
++----------+--------------+------------+------------+------------+
+| nim      | nama         | semester_1 | semester_2 | semester_3 |
++----------+--------------+------------+------------+------------+
+| 17090113 | Riana Putria |       3.12 |       2.98 |       3.45 |
+| 17140143 | Rudi Permana |       2.56 |       3.14 |       3.22 |
++----------+--------------+------------+------------+------------+
+2 rows in set (0.001 sec)
+
+MariaDB [belajar]> select * from ipk_mahasiswa;
++-------------------------+-----------+
+| nama_dan_nim            | nilai_ipk |
++-------------------------+-----------+
+| RIANA PUTRIA (17090113) |      3.18 |
+| RUDI PERMANA (17140143) |      2.97 |
++-------------------------+-----------+
+2 rows in set (0.001 sec)
